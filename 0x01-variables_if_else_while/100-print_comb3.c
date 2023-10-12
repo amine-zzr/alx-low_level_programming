@@ -7,30 +7,24 @@
  *
  * Return: always 0
 */
-
 int main(void)
 {
-	int digit1 = 0, digit2;
 
-	while (digit1 <= 9)
+	int i, j;
+
+	for (i = 0; i < 10; i++)
 	{
-		digit2 = 0;
-		while (digit2 <= 9)
+		for (j = i + 1; j < 10; j++)
 		{
-			if (digit1 != digit2 && digit1 < digit2)
-			{
-				putchar(digit1 + 48);
-				putchar(digit2 + 48);
+			putchar('0' + i);
+			putchar('0' + j);
 
-				if (digit1 + digit2 != 17)
-				{
-					putchar(',');
-					putchar(' ');
-				}
+			if (i != 8 || j != 9)
+			{
+				putchar(',');
+				putchar(' ');
 			}
-			digit2++;
 		}
-		digit1++;
 	}
 	putchar('\n');
 	return (0);
