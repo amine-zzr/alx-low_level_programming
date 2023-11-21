@@ -1,24 +1,31 @@
 #include "lists.h"
 
 /**
- * free_listint2 - frees a list malloced space.
- * @head: the head of the list.
+ * free_listint2 - frees a listint_t list
+ *
+ * @head: the head of the list
+ *
+ * Return: NULL if error
  */
 
 void free_listint2(listint_t **head)
 {
-	listint_t *temp, *ptr;
+	listint_t *next, *t;
 
-	if (head == NULL)
+	if (head == NULL || *head == NULL)
 		return;
 
-	temp = *head;
-	while (temp != NULL)
+
+
+	t = *head;
+
+
+	while (t != NULL)
 	{
-		ptr = temp;
-		free(temp);
-		temp = ptr->next;
+		next = t->next;
+		free(t);
+		t = next;
 	}
 
-	*head = NULL;
+*head = NULL;
 }
