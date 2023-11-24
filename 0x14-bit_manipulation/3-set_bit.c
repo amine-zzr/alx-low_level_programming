@@ -1,4 +1,4 @@
-#include "mai.h"
+#include "main.h"
 
 /**
  * set_bit - sets a bit
