@@ -21,24 +21,20 @@ int main(int argc, char **argv)
 
 	fd1 = open(argv[1], O_RDONLY);
 	fd2 = open(argv[2], O_WRONLY | O_CREAT | O_TRUNC, 0664);
-	readed = read(fd1, buffer, 1024);
 
-	if (fd1 == -1 || readed == -1)
+	while ((readed = read(fd1, buffer, 1024)) > 0)
 	{
-		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
-		exit(98);
-	}
-
-	while (readed > 0)
-	{
+		if (fd1 == -1 || readed == -1)
+		{
+			dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
+			exit(98);
+		}
 		written = write(fd2, buffer, readed);
 		if (fd2 == -1 || written == -1)
 		{
 			dprintf(STDERR_FILENO, "Error: Can't write to %s\n", argv[2]);
 			exit(99);
 		}
-
-		readed = read(fd1, buffer, 1024);
 	}
 
 	if (close(fd1) == -1)
