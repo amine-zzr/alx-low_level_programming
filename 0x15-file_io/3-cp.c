@@ -1,4 +1,5 @@
 #include "main.h"
+#define SIZE 1024
 
 /**
  * main - copies the content of a file to another file.
@@ -10,7 +11,7 @@
 int main(int argc, char **argv)
 {
 	int fd1, fd2;
-	char buffer[1024];
+	char buffer[SIZE];
 	ssize_t readed, written;
 
 	if (argc != 3)
@@ -21,14 +22,15 @@ int main(int argc, char **argv)
 
 	fd1 = open(argv[1], O_RDONLY);
 	fd2 = open(argv[2], O_WRONLY | O_CREAT | O_TRUNC, 0664);
+	readed = read(fd1, buffer, SIZE);
 
-	while ((readed = read(fd1, buffer, 1024)) > 0)
+	if (fd1 == -1 || readed == -1)
 	{
-		if (fd1 == -1 || readed == -1)
-		{
-			dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
-			exit(98);
-		}
+		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
+		exit(98);
+	}
+	while ((readed = read(fd1, buffer, SIZE)) > 0)
+	{
 		written = write(fd2, buffer, readed);
 		if (fd2 == -1 || written == -1)
 		{
@@ -36,7 +38,6 @@ int main(int argc, char **argv)
 			exit(99);
 		}
 	}
-
 	if (close(fd1) == -1)
 	{
 		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd1);
