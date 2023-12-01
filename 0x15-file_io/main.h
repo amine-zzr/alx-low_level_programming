@@ -1,6 +1,8 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+#define SIZE 1 << 10
+
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
