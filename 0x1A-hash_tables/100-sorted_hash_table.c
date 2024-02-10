@@ -43,15 +43,12 @@ int shash_table_set(shash_table_t *ht, const char *key, const char *value)
 
 	if (ht == NULL || key == NULL || *key == '\0')
 		return (0);
-
 	new_node = malloc(sizeof(shash_node_t));
 	if (new_node == NULL)
 		return (0);
-
 	new_node->key = strdup(key);
 	new_node->value = strdup(value);
 	new_node->next = NULL;
-
 	if (new_node->key == NULL || new_node->value == NULL)
 	{
 		free(new_node->key);
@@ -59,7 +56,6 @@ int shash_table_set(shash_table_t *ht, const char *key, const char *value)
 		free(new_node);
 		return (0);
 	}
-
 	if (ht->shead == NULL || strcmp(key, ht->shead->key) <= 0)
 	{
 		new_node->snext = ht->shead;
@@ -67,7 +63,6 @@ int shash_table_set(shash_table_t *ht, const char *key, const char *value)
 		if (ht->shead)
 			ht->shead->sprev = new_node;
 		ht->shead = new_node;
-
 		if (ht->stail == NULL)
 			ht->stail = new_node;
 	}
@@ -76,29 +71,27 @@ int shash_table_set(shash_table_t *ht, const char *key, const char *value)
 		current = ht->shead;
 		while (current->snext && strcmp(key, current->snext->key) > 0)
 			current = current->snext;
-
 		new_node->sprev = current;
 		new_node->snext = current->snext;
 		if (current->snext)
 			current->snext->sprev = new_node;
 		else
 			ht->stail = new_node;
-
 		current->snext = new_node;
 	}
-
 	if (shash_table_get(ht, key) == NULL)
 		return (0);
-
 	return (1);
 }
 
 /**
- * shash_table_get - Retrieves a value associated with a key in a sorted hash table
+ * shash_table_get - Retrieves a value associated with
+ * a key in a sorted hash table
  * @ht: The sorted hash table
  * @key: The key to search for
  *
- * Return: The value associated with the element, or NULL if key couldn’t be found
+ * Return: The value associated with the element,
+ * or NULL if key couldn’t be found
  */
 char *shash_table_get(const shash_table_t *ht, const char *key)
 {
