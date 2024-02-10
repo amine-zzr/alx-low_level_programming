@@ -39,16 +39,23 @@ shash_table_t *shash_table_create(unsigned long int size)
  */
 int shash_table_set(shash_table_t *ht, const char *key, const char *value)
 {
-	shash_node_t *new_node, *current;
+	shash_node_t *new_node;
 
+	/* Check if the hash table or key is NULL or empty */
 	if (ht == NULL || key == NULL || *key == '\0')
 		return (0);
+
+	/* Create a new node and allocate memory for it */
 	new_node = malloc(sizeof(shash_node_t));
 	if (new_node == NULL)
 		return (0);
+
+	/* Initialize the key/value and next pointers of the new node */
 	new_node->key = strdup(key);
 	new_node->value = strdup(value);
 	new_node->next = NULL;
+
+	/* Check if memory allocation for key/value failed */
 	if (new_node->key == NULL || new_node->value == NULL)
 	{
 		free(new_node->key);
@@ -56,33 +63,79 @@ int shash_table_set(shash_table_t *ht, const char *key, const char *value)
 		free(new_node);
 		return (0);
 	}
+
+	/* Insert the new node into the sorted linked list */
 	if (ht->shead == NULL || strcmp(key, ht->shead->key) <= 0)
 	{
-		new_node->snext = ht->shead;
-		new_node->sprev = NULL;
-		if (ht->shead)
-			ht->shead->sprev = new_node;
-		ht->shead = new_node;
-		if (ht->stail == NULL)
-			ht->stail = new_node;
+		insert_at_head(ht, new_node); /* Insert at the head of the list */
 	}
 	else
 	{
-		current = ht->shead;
-		while (current->snext && strcmp(key, current->snext->key) > 0)
-			current = current->snext;
-		new_node->sprev = current;
-		new_node->snext = current->snext;
-		if (current->snext)
-			current->snext->sprev = new_node;
-		else
-			ht->stail = new_node;
-		current->snext = new_node;
+		insert_in_middle(ht, new_node); /* Insert in the middle of the list */
 	}
+
+	/* Check if insertion was successful by verifying if the key exists */
 	if (shash_table_get(ht, key) == NULL)
 		return (0);
-	return (1);
+
+	return (1); /* Insertion successful */
 }
+
+/**
+ * insert_at_head - Inserts a node at the head of a sorted linked list.
+ * @ht: A pointer to the sorted hash table.
+ * @new_node: The new node to insert.
+ *
+ * Description: This function inserts a new node at the head of the sorted
+ *              linked list in the given sorted hash table.
+ */
+void insert_at_head(shash_table_t *ht, shash_node_t *new_node)
+{
+	if (ht->shead == NULL)
+	{
+		ht->shead = new_node;
+		ht->stail = new_node;
+	}
+	else
+	{
+		new_node->snext = ht->shead;
+		ht->shead->sprev = new_node;
+		ht->shead = new_node;
+	}
+}
+
+/**
+ * insert_in_middle - Inserts a node into the middle of a sorted linked list.
+ * @ht: A pointer to the sorted hash table.
+ * @new_node: The new node to insert.
+ *
+ * Description: This function inserts a new node into the middle of the sorted
+ *              linked list in the given sorted hash table, maintaining the
+ *              sorted order.
+ */
+void insert_in_middle(shash_table_t *ht, shash_node_t *new_node)
+{
+	shash_node_t *current = ht->shead;
+
+	while (current->snext != NULL && strcmp(
+				current->snext->key, new_node->key) < 0)
+	{
+		current = current->snext;
+	}
+
+	new_node->sprev = current;
+	new_node->snext = current->snext;
+	if (current->snext != NULL)
+	{
+		current->snext->sprev = new_node;
+	}
+	else
+	{
+		ht->stail = new_node;
+	}
+	current->snext = new_node;
+}
+
 
 /**
  * shash_table_get - Retrieves a value associated with
